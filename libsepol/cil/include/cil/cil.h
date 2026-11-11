@@ -53,6 +53,9 @@ extern int cil_filecons_to_string(cil_db_t *db, char **out, size_t *size);
 extern void cil_set_disable_dontaudit(cil_db_t *db, int disable_dontaudit);
 extern void cil_set_multiple_decls(cil_db_t *db, int multiple_decls);
 extern void cil_set_qualified_names(struct cil_db *db, int qualified_names);
+// ANDROID: Allow ignoring unknown types when resolving AST.
+extern void cil_set_ignore_unknown_types(struct cil_db *db,
+					 int ignore_unknown_types);
 extern void cil_set_disable_neverallow(cil_db_t *db, int disable_neverallow);
 extern void cil_set_preserve_tunables(cil_db_t *db, int preserve_tunables);
 extern int cil_set_handle_unknown(cil_db_t *db, int handle_unknown);
