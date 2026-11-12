@@ -195,6 +195,7 @@ static __attribute__((__noreturn__)) void usage(const char *prog)
 	printf("                                 Blocks, blockinherits, blockabstracts, and\n");
 	printf("                                 in-statements will not be allowed.\n");
 	printf("  -m, --multiple-decls           allow some statements to be re-declared\n");
+	printf("  -u, --ignore-unknown-types     ignore unknown types in neverallow rules\n");
 	printf("  -v, --verbose                  increment verbosity level\n");
 	printf("  -h, --help                     display usage information\n");
 	exit(1);
@@ -208,6 +209,7 @@ int main(int argc, char *argv[])
 	struct cil_db *db = NULL;
 	int multiple_decls = 0;
 	int qualified_names = 0;
+	int ignore_unknown_types = 0;
 	int opt_char;
 	int opt_index = 0;
 	enum cil_log_level log_level = CIL_ERR;
@@ -216,12 +218,13 @@ int main(int argc, char *argv[])
 		{ "verbose", no_argument, NULL, 'v' },
 		{ "multiple-decls", no_argument, NULL, 'm' },
 		{ "qualified-names", no_argument, NULL, 'Q' },
+		{ "ignore-unknown-types", no_argument, NULL, 'u' },
 		{ NULL, 0, NULL, 0 }
 	};
 
 	while (1) {
 		opt_char =
-			getopt_long(argc, argv, "hvQm", long_opts, &opt_index);
+			getopt_long(argc, argv, "hvQmu", long_opts, &opt_index);
 		if (opt_char == -1) {
 			break;
 		}
@@ -234,6 +237,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'Q':
 			qualified_names = 1;
+			break;
+		case 'u':
+			ignore_unknown_types = 1;
 			break;
 		case 'h':
 			usage(argv[0]);
@@ -255,6 +261,7 @@ int main(int argc, char *argv[])
 	cil_db_init(&db);
 	cil_set_multiple_decls(db, multiple_decls);
 	cil_set_qualified_names(db, qualified_names);
+	cil_set_ignore_unknown_types(db, ignore_unknown_types);
 
 	if (sepol_policydb_create(&pdb) < 0) {
 		fprintf(stderr, "Out of memory\n");

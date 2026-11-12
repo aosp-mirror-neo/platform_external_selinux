@@ -334,6 +334,8 @@ struct cil_db {
 	int mls;
 	int multiple_decls;
 	int qualified_names;
+	// ANDROID: Allow ignoring unknown types when resolving AST.
+	int ignore_unknown_types;
 	int target_platform;
 	int policy_version;
 };

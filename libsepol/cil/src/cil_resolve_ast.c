@@ -4691,8 +4691,40 @@ static int __cil_resolve_name_with_root(struct cil_db *db, char *name,
 {
 	symtab_t *symtab =
 		&((struct cil_root *)db->ast->root->data)->symtab[sym_index];
+	int rc = cil_symtab_get_datum(symtab, name, datum);
 
-	return cil_symtab_get_datum(symtab, name, datum);
+	// ANDROID: When ignore_unknown_types is enabled, treat any unresolved
+	// type or typeattribute as an empty typeattribute at the root scope so
+	// assertions referencing types absent from the binary policy can still
+	// be evaluated.
+	if (rc != SEPOL_OK && db->ignore_unknown_types &&
+	    sym_index == CIL_SYM_TYPES) {
+		struct cil_typeattribute *attr = NULL;
+		struct cil_tree_node *node = NULL;
+
+		cil_typeattribute_init(&attr);
+		cil_tree_node_init(&node);
+		node->parent = db->ast->root;
+		node->flavor = CIL_TYPEATTRIBUTE;
+		node->data = attr;
+
+		rc = cil_symtab_insert(symtab, name,
+				       (struct cil_symtab_datum *)attr, node);
+		if (rc != SEPOL_OK) {
+			cil_tree_node_destroy(&node);
+			goto exit;
+		}
+
+		node->next = db->ast->root->cl_head;
+		if (db->ast->root->cl_tail == NULL) {
+			db->ast->root->cl_tail = node;
+		}
+		db->ast->root->cl_head = node;
+		*datum = (struct cil_symtab_datum *)attr;
+	}
+
+exit:
+	return rc;
 }
 
 static int __cil_resolve_name_with_parents(struct cil_tree_node *node,

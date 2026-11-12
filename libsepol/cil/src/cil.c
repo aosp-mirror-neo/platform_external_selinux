@@ -466,6 +466,8 @@ void cil_db_init(struct cil_db **db)
 	(*db)->mls = -1;
 	(*db)->multiple_decls = CIL_FALSE;
 	(*db)->qualified_names = CIL_FALSE;
+	// ANDROID: Allow ignoring unknown types when resolving AST.
+	(*db)->ignore_unknown_types = CIL_FALSE;
 	(*db)->target_platform = SEPOL_TARGET_SELINUX;
 	(*db)->policy_version = POLICYDB_VERSION_MAX;
 }
@@ -2018,6 +2020,12 @@ void cil_set_multiple_decls(struct cil_db *db, int multiple_decls)
 void cil_set_qualified_names(struct cil_db *db, int qualified_names)
 {
 	db->qualified_names = qualified_names;
+}
+
+// ANDROID: Allow ignoring unknown types when resolving AST.
+void cil_set_ignore_unknown_types(struct cil_db *db, int ignore_unknown_types)
+{
+	db->ignore_unknown_types = ignore_unknown_types;
 }
 
 void cil_set_target_platform(struct cil_db *db, int target_platform)
