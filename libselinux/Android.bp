@@ -1,5 +1,6 @@
 package {
     default_applicable_licenses: ["external_selinux_libselinux_license"],
+    default_team: "trendy_team_platform_security",
 }
 
 // Added automatically by a large-scale-change that took the approach of
